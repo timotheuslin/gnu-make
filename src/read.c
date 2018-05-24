@@ -663,6 +663,20 @@ eval (struct ebuffer *ebuf, int set_default)
       if (line[0] == '\0')
         continue;
 
+      /* Let's face the fact that people incline to use/misuse any legth
+         of the whitespaces for cmd_prefix, instead of the nerdy TAB.  */
+      if ((!no_targets) && entab && (cmd_prefix == '\t')) {
+        int nwh = 0;
+
+        while ((line[nwh] == ' ') || (line[nwh] == '\t')) {
+          nwh++;
+        }
+        if (nwh) {
+          line += (nwh-1);
+          line[0] = cmd_prefix;
+        }
+      }
+
       linelen = strlen (line);
 
       /* Check for a shell command line first.

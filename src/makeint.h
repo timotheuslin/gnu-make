@@ -685,6 +685,9 @@ extern int batch_mode_shell;
 #define RECIPEPREFIX_DEFAULT       '\t'
 extern char cmd_prefix;
 
+#define ENTABPREFIX_NAME           ".ENTABPREFIX"
+extern char entab;
+
 extern unsigned int job_slots;
 extern double max_load_average;
 

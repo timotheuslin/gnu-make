@@ -325,6 +325,10 @@ struct variable shell_var;
 
 char cmd_prefix = '\t';
 
+/* Convert the leading whitespaces to a cmd_prefix character.  */
+
+char entab = 1;
+
 
 /* The usage output.  We write it this way to make life easier for the
    translators, especially those trying to translate to right-to-left
