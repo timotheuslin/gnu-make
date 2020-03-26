@@ -327,9 +327,14 @@ char cmd_prefix = '\t';
 
 /* Convert the leading whitespaces to a cmd_prefix character.  */
 
-char entab = 1;
+int entab = 0;
 
-
+/* To display elapsed time.  */
+
+char *display_datatime = NULL;
+clock_t start_clock;
+time_t start_time;
+
 /* The usage output.  We write it this way to make life easier for the
    translators, especially those trying to translate to right-to-left
    languages like Hebrew.  */
@@ -1075,6 +1080,9 @@ main (int argc, char **argv, char **envp)
   unixy_shell = 0;
   no_default_sh_exe = 1;
 #endif
+
+  start_clock = clock ();
+  time (&start_time);
 
   /* Useful for attaching debuggers, etc.  */
   SPIN ("main-entry");
@@ -3507,6 +3515,43 @@ die (int status)
           /* If it fails we don't care: shut up GCC.  */
           int _x UNUSED;
           _x = chdir (directory_before_chdir);
+        }
+    }
+
+    /* Display the start/end/elapsed time based on .DISPELAPSEDTIME, which
+       can be assigned with specifiers of the STD C-library strftime(), or
+       left blank.
+       - Syntax:
+        .DISPELAPSEDTIME
+        .DISPELAPSEDTIME:
+        .DISPELAPSEDTIME = %c
+        .DISPELAPSEDTIME = %x %X
+       */
+    {
+      char *display_datatime_x = variable_expand("$(" DISPELAPSEDTIME_NAME ")");
+
+      if (display_datatime_x && *display_datatime_x)
+        display_datatime = display_datatime_x;
+
+      if (display_datatime)
+        {
+          #define DISPELAPSEDTIME_BUFFER_SIZE 1024
+          char buffer[DISPELAPSEDTIME_BUFFER_SIZE+1];
+          struct tm *localtime_info;
+          time_t end_time = 0;
+          clock_t end_clock = clock ();
+          unsigned long elapsed_ms = end_clock - start_clock;
+          unsigned long mins =  elapsed_ms / 60000;
+          float secs = (elapsed_ms % 60000) / 1000.;
+
+          time (&end_time);
+          localtime_info = localtime (&start_time);
+          strftime (buffer, DISPELAPSEDTIME_BUFFER_SIZE, display_datatime, localtime_info);
+          printf (_("--\nGnuMake Start Time: %s\n"), buffer);
+          localtime_info = localtime (&end_time);
+          strftime (buffer, DISPELAPSEDTIME_BUFFER_SIZE, display_datatime, localtime_info);
+          printf (_("          End Time: %s\n"), buffer);
+          printf (_("      Elapsed Time: %ld mins %.3lf seconds (%ld ms)"), mins, secs, elapsed_ms);
         }
     }
 

@@ -1000,6 +1000,23 @@ eval (struct ebuffer *ebuf, int set_default)
       if (line[0] == cmd_prefix)
         O (fatal, fstart, _("recipe commences before first target"));
 
+      /* Let's face the fact that people incline to use/misuse any legth
+         of the whitespaces for cmd_prefix, instead of the nerdy TAB. */
+      if (!entab)
+        if (streq (line, ENTABPREFIX_NAME) || streq (line, ENTABPREFIX_NAME ":"))
+          {
+            entab = 1;
+            continue;
+          }
+
+      /* Display the execution star/end/elapsed time. */
+      if (!display_datatime)
+        if (streq (line, DISPELAPSEDTIME_NAME) || streq (line, DISPELAPSEDTIME_NAME ":"))
+          {
+            display_datatime = DATATIME_FORMAT_DEFAULT;
+            continue;
+          }
+
       /* This line describes some target files.  This is complicated by
          the existence of target-specific variables, because we can't
          expand the entire line until we know if we have one or not.  So

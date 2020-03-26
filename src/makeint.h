@@ -685,8 +685,12 @@ extern int batch_mode_shell;
 #define RECIPEPREFIX_DEFAULT       '\t'
 extern char cmd_prefix;
 
-#define ENTABPREFIX_NAME           ".ENTABPREFIX"
-extern char entab;
+#define ENTABPREFIX_NAME            ".ENTABPREFIX"
+extern int entab;
+
+#define DISPELAPSEDTIME_NAME        ".DISPELAPSEDTIME"
+#define DATATIME_FORMAT_DEFAULT     "%x %X%p"
+extern char *display_datatime;
 
 extern unsigned int job_slots;
 extern double max_load_average;
