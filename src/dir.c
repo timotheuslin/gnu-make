@@ -175,7 +175,7 @@ vms_hash (const char *name)
 
   while (*name)
     {
-      unsigned char uc = *name;
+      unsigned char uc = (unsigned char) *name;
       int g;
 #ifdef HAVE_CASE_INSENSITIVE_FS
       h = (h << 4) + (isupper (uc) ? tolower (uc) : uc);
@@ -1286,13 +1286,13 @@ local_stat (const char *path, struct stat *buf)
   /* Make sure the parent of "." exists and is a directory, not a
      file.  This is because 'stat' on Windows normalizes the argument
      foo/. => foo without checking first that foo is a directory.  */
-  if (plen > 1 && path[plen - 1] == '.'
+  if (plen > 2 && path[plen - 1] == '.'
       && (path[plen - 2] == '/' || path[plen - 2] == '\\'))
     {
-      char parent[MAXPATHLEN];
+      char parent[MAXPATHLEN+1];
 
-      strncpy (parent, path, plen - 2);
-      parent[plen - 2] = '\0';
+      strncpy (parent, path, MAXPATHLEN);
+      parent[MIN(plen - 2, MAXPATHLEN)] = '\0';
       if (stat (parent, buf) < 0 || !_S_ISDIR (buf->st_mode))
         return -1;
     }
