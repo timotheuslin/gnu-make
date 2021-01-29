@@ -318,10 +318,6 @@ int rebuilding_makefiles = 0;
 
 struct variable shell_var;
 
-/* This character introduces a command: it's the first char on the line.  */
-
-char cmd_prefix = '\t';
-
 /* Convert the leading whitespaces to a cmd_prefix character.  */
 
 int entab = 0;
@@ -331,6 +327,10 @@ int entab = 0;
 char *display_datatime = NULL;
 clock_t start_clock;
 time_t start_time;
+
+/* This character introduces a command: it's the first char on the line.  */
+
+char cmd_prefix = '\t';
 
 /* The usage output.  We write it this way to make life easier for the
    translators, especially those trying to translate to right-to-left
