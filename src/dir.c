@@ -481,6 +481,7 @@ find_directory (const char *name)
   dir_key.name = name;
   dir_slot = (struct directory **) hash_find_slot (&directories, &dir_key);
   dir = *dir_slot;
+  size_t len = strlen (name); //bugbug+
 
   if (!HASH_VACANT (dir))
     {
@@ -499,7 +500,7 @@ find_directory (const char *name)
   else
     {
       /* The directory was not found.  Create a new entry for it.  */
-      size_t len = strlen (name);
+      //bugbug- size_t len = strlen (name);
 
       dir = xmalloc (sizeof (struct directory));
 #if defined(HAVE_CASE_INSENSITIVE_FS) && defined(VMS)
@@ -525,11 +526,11 @@ find_directory (const char *name)
 
     /* Remove any trailing slashes.  Windows32 stat fails even on
        valid directories if they end in a slash. */
-    memcpy (tem, name, p - name + 1);
+    memcpy (tem, name, len + 1);
     tstart = tem;
     if (tstart[1] == ':')
       tstart += 2;
-    for (tend = tem + (p - name - 1);
+    for (tend = tem + (len - 1);
          tend > tstart && (*tend == '/' || *tend == '\\');
          tend--)
       *tend = '\0';
